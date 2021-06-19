@@ -3,11 +3,17 @@ package com.example.activity5a;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.telecom.Call;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.example.activity5a.Retrofit.RetrofitBuilder;
+import com.example.activity5a.Retrofit.RetrofitInterface;
 
 public class MainActivity extends AppCompatActivity {
     Button button_convert;
@@ -32,20 +38,30 @@ public class MainActivity extends AppCompatActivity {
 
         button_convert.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View viow){
+            public void onClick(View view){
+
                 RetrofitInterface retrofitInterface = RetrofitBuilder.getRetrofitInstance().create(RetrofitInstance.class);
 
                 Call<JsonObject> call = retrofitInterface.getExchangeCurrency(spin_from_convert.getSelectedItem().toString());
                 call.enqueue(new Callback<JsonObject>() {
                     @Override
-                    public void onResponse(Call )
-                }
-            })
-            }
+                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                        Log.d("response", String.valueOf(response.body()));
+                        Toast.makeText(MainActivity.this, "Computed", Toast.LENGTH_SHORT).show();
+                        JsonObject res = response.body();
+                        JsonOnject rates = res.getAsJsonObject("conversion_rates");
+                        Double currency = Double.valueOf(text_base_currency.getText().toString());
+                        Double multiplier = Double.valueOf(rates.get(spin_to_convert.getSelectedItem().toString()).toString());
+                        Double result = currency * multiplier;
+                        text_result_currency.setText(String.valueOf(result));
+                    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
+                    @Override
+                    public public void onFailure(Call<JsonObject> call, Throwable t) {
+
+                    }
+            });
+
+            }
+    }); 
 }
