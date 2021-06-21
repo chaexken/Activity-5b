@@ -14,6 +14,10 @@ import android.widget.Toast;
 
 import com.example.activity5a.Retrofit.RetrofitBuilder;
 import com.example.activity5a.Retrofit.RetrofitInterface;
+import com.google.gson.JsonObject;
+
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     Button button_convert;
@@ -40,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view){
 
-                RetrofitInterface retrofitInterface = RetrofitBuilder.getRetrofitInstance().create(RetrofitInstance.class);
+                RetrofitInterface retrofitInterface = RetrofitBuilder.getRetrofitInstance().create(RetrofitInterface.class);
 
                 Call<JsonObject> call = retrofitInterface.getExchangeCurrency(spin_from_convert.getSelectedItem().toString());
                 call.enqueue(new Callback<JsonObject>() {
@@ -49,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("response", String.valueOf(response.body()));
                         Toast.makeText(MainActivity.this, "Computed", Toast.LENGTH_SHORT).show();
                         JsonObject res = response.body();
-                        JsonOnject rates = res.getAsJsonObject("conversion_rates");
+                        JsonObject rates = res.getAsJsonObject("conversion_rates");
                         Double currency = Double.valueOf(text_base_currency.getText().toString());
                         Double multiplier = Double.valueOf(rates.get(spin_to_convert.getSelectedItem().toString()).toString());
                         Double result = currency * multiplier;
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public public void onFailure(Call<JsonObject> call, Throwable t) {
+                    public void onFailure(Call<JsonObject> call, Throwable t) {
 
                     }
             });
